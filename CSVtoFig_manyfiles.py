@@ -22,13 +22,17 @@ if File_num == 1:
 else:
     dfall = pd.read_csv(glob.glob('./*.Csv')[0],encoding='cp932',header = 43)    
 
-data_which = input("湾内が先なら0, 湾外が先なら1を入力:")
-if data_which == 0:
-    a = 'Bay'
-    b = 'Open Ocean'
+data_which = input("データポイント数入力:")
+data_which = int(data_which)
+if data_which == 2:
+    a = '1'
+    b = '2'
+elif data_which == 3:
+    a = '1'
+    b = '2'
+    c = '3'
 else:
-    a = 'Open Ocean'
-    b = 'Bay'
+    a = '1'
 
 Filename = glob.glob('./*.Csv')[0]
 Exp_Date = re.findall(r'\d+', Filename)[0]
@@ -40,12 +44,16 @@ dfall['index_d'] = dfall.index
 
 peaks, _= find_peaks(dfall['深度 [m]'],prominence=5, distance = 30) #ピーク検出
 data_li = []
-for i in range(len(peaks)):
-    if i == 0:
-        data_li.append(dfall.iloc[:round(np.median(peaks))].reset_index())
-    else:
-        data_li.append(dfall.iloc[round(np.median(peaks)):].reset_index())
-    
+print(peaks)
+if len(peaks) == 2:
+    data_li.append(dfall.iloc[:round(np.median(peaks))].reset_index())
+    data_li.append(dfall.iloc[round(np.median(peaks)):].reset_index())
+elif len(peaks) == 3:
+    data_li.append(dfall.iloc[:round(np.median(peaks[0:2]))].reset_index())
+    data_li.append(dfall.iloc[round(np.median(peaks[0:2])):round(np.median(peaks[1:3]))].reset_index())
+    data_li.append(dfall.iloc[round(np.median(peaks[1:3])):].reset_index())
+
+
 peak_data_li = []
 for i in range(len(peaks)):
     x = data_li[i]['index_d']
@@ -71,27 +79,30 @@ figs.suptitle("{}_CTD data".format(Exp_Date), size = 25)
 #plt.text(0.5,0.5,"Blue Dots: In the bay\nOrange Dots: Outside the bay", size=25, alpha=0.7, ha="center", va="center")
 axes[0,0].scatter(peak_data_li[0]["水温 [℃]"], peak_data_li[0]["深度 [m]"])
 axes[0,0].scatter(peak_data_li[1]["水温 [℃]"], peak_data_li[1]["深度 [m]"])
+axes[0,0].scatter(peak_data_li[2]["水温 [℃]"], peak_data_li[2]["深度 [m]"])
 axes[0,0].invert_yaxis()
 axes[0,0].xaxis.tick_top()
 axes[0,0].xaxis.set_label_position('top')
 axes[0,0].set_xlabel('Temperature [℃]',labelpad=10)
 axes[0,0].set_ylabel('Depth [m]')
 axes[0,0].patch.set_alpha(1)  
-axes[0,0].legend(["{}".format(a), "{}".format(b)])
+axes[0,0].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
 axes[0,1].scatter(peak_data_li[0]["塩分 [ ]"], peak_data_li[0]["深度 [m]"])
 axes[0,1].scatter(peak_data_li[1]["塩分 [ ]"], peak_data_li[1]["深度 [m]"])
+axes[0,1].scatter(peak_data_li[2]["塩分 [ ]"], peak_data_li[2]["深度 [m]"])
 axes[0,1].invert_yaxis()
 axes[0,1].xaxis.tick_top()
 axes[0,1].xaxis.set_label_position('top')
-axes[0,1].set_xlim(30,)
+axes[0,1].set_xlim(31,)
 axes[0,1].set_xlabel('Salinity [‰]',labelpad=10)
 axes[0,1].set_ylabel('Depth [m]')
 axes[0,1].patch.set_alpha(1)  
-axes[0,1].legend(["{}".format(a), "{}".format(b)])
+axes[0,1].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
 axes[1,0].scatter(peak_data_li[0]["濁度中ﾚﾝｼﾞ [FTU]"], peak_data_li[0]["深度 [m]"])
 axes[1,0].scatter(peak_data_li[1]["濁度中ﾚﾝｼﾞ [FTU]"], peak_data_li[1]["深度 [m]"])
+axes[1,0].scatter(peak_data_li[2]["濁度中ﾚﾝｼﾞ [FTU]"], peak_data_li[2]["深度 [m]"])
 axes[1,0].invert_yaxis()
 axes[1,0].xaxis.tick_top()
 axes[1,0].xaxis.set_label_position('top')
@@ -99,31 +110,33 @@ axes[1,0].set_xlabel(' Turbidity [FTU]',labelpad=10)
 axes[1,0].set_xlim(0,4)
 axes[1,0].set_ylabel('Depth [m]')
 axes[1,0].patch.set_alpha(1)  
-axes[1,0].legend(["{}".format(a), "{}".format(b)])
+axes[1,0].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
 
 axes[1,1].scatter(peak_data_li[0]["Weiss-DO [mg/l]"], peak_data_li[0]["深度 [m]"])
 axes[1,1].scatter(peak_data_li[1]["Weiss-DO [mg/l]"], peak_data_li[1]["深度 [m]"])
+axes[1,1].scatter(peak_data_li[2]["Weiss-DO [mg/l]"], peak_data_li[2]["深度 [m]"])
 axes[1,1].invert_yaxis()
 axes[1,1].xaxis.tick_top()
 axes[1,1].xaxis.set_label_position('top')
 axes[1,1].set_xlabel('DO [mg/l]',labelpad=10)
-axes[1,1].set_xlim(0,8)
+axes[1,1].set_xlim(5,7)
 axes[1,1].set_ylabel('Depth [m]')
 axes[1,1].patch.set_alpha(1)  
-axes[1,1].legend(["{}".format(a), "{}".format(b)])
+axes[1,1].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
 
 axes[2,0].scatter(peak_data_li[0]["Chl-a [μg/l]"], peak_data_li[0]["深度 [m]"])
 axes[2,0].scatter(peak_data_li[1]["Chl-a [μg/l]"], peak_data_li[1]["深度 [m]"])
+axes[2,0].scatter(peak_data_li[2]["Chl-a [μg/l]"], peak_data_li[2]["深度 [m]"])
 axes[2,0].invert_yaxis()
 axes[2,0].xaxis.tick_top()
 axes[2,0].xaxis.set_label_position('top')
 axes[2,0].set_xlabel('Chl-a [μg/l]',labelpad=10)
-axes[2,0].set_xlim(0.5,6)
+axes[2,0].set_xlim(0.5,3)
 axes[2,0].set_ylabel('Depth [m]')
 axes[2,0].patch.set_alpha(1)  
-axes[2,0].legend(["{}".format(a), "{}".format(b)])
+axes[2,0].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
 axes[2,1].axis('off')
 
