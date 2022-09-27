@@ -62,8 +62,11 @@ for i in range(len(peaks)):
     params = model.guess(y,x)
     result = model.fit(y, params, x=x)
     max_depth = round(result.params.valuesdict()['center'])
-    min_depth = round(result.params.valuesdict()['center']+result.params.valuesdict()['sigma']*2) #95%
-    peak_data_li.append(dfall[max_depth:min_depth])
+    min_depth = round(result.params.valuesdict()['center']+result.params.valuesdict()['sigma']*3) #95%
+    peak_data_i = dfall[max_depth:min_depth]
+    peak_data_i = peak_data_i[peak_data_i['深度 [m]']>=0.2]
+    peak_data_li.append(peak_data_i)
+
 
 figs,axes = plt.subplots(nrows=3, ncols=2,figsize=(20,20))
 plt.rcParams.update({'font.size': 18})
@@ -138,7 +141,17 @@ axes[2,0].set_ylabel('Depth [m]')
 axes[2,0].patch.set_alpha(1)  
 axes[2,0].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
-axes[2,1].axis('off')
+axes[2,1].scatter(peak_data_li[0]["塩分 [ ]"], peak_data_li[0]["水温 [℃]"])
+axes[2,1].scatter(peak_data_li[1]["塩分 [ ]"], peak_data_li[1]["水温 [℃]"])
+axes[2,1].scatter(peak_data_li[2]["塩分 [ ]"], peak_data_li[2]["水温 [℃]"])
+#axes[2,1].invert_yaxis()
+#axes[2,1].xaxis.tick_top()
+#axes[2,1].xaxis.set_label_position('top')
+axes[2,1].set_xlabel('Salinity [‰]')
+axes[2,1].set_xlim(32,)
+axes[2,1].set_ylabel('Temperature [℃]')
+axes[2,1].patch.set_alpha(1)
+axes[2,1].legend(["{}".format(a), "{}".format(b), "{}".format(c)])
 
 #figs.legend('','')
 fname = "./{}_CTD.png".format(Exp_Date)
