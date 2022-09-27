@@ -12,7 +12,7 @@ import datetime
 import re
 plt.style.use('ggplot')
 
-File_num = int(input("連続ファイルは0,別は1を入力:"))
+File_num = int(input("Continuous measurement:input 0,Different files for different points:input 1"))
 if File_num == 1:
     files = glob.glob('./*.Csv')
     files1 = pd.read_csv(files[0],encoding='cp932',header = 43)
@@ -22,15 +22,15 @@ if File_num == 1:
 else:
     dfall = pd.read_csv(glob.glob('./*.Csv')[0],encoding='cp932',header = 43)    
 
-data_which = input("データポイント数入力:")
+data_which = input("Input datapoint number:")
 data_which = int(data_which)
 if data_which == 2:
-    a = '1'
-    b = '2'
+    a = input('Enter 1st point name (i.e. Outside the bay):')
+    b = input('Enter 2nd point name (i.e. Inside the bay):')
 elif data_which == 3:
-    a = '1'
-    b = '2'
-    c = '3'
+    a = input('Enter 1st point name (i.e. Outside the bay):')
+    b = input('Enter 2nd point name (i.e. Inside the bay 1):')
+    c = input('Enter 3rd point name (i.e. Inside the bay 2):')
 else:
     a = '1'
 
