@@ -1,4 +1,4 @@
-# shimoda_practical_training
+# CTD Data Visualize
 ## 使い方
 - .CSVファイルをCSVtoFig.pyと同じ階層においてください
 - CSVtoFig.pyを実行します
